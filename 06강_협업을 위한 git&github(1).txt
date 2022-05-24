@@ -1,0 +1,229 @@
+6강. 협업을 위한 git&github(1) [ 이언 교수 ]
+
+학습개요
+본 강의에서는 버젼관리 시스템의 개념과 필요성, 그리고 git에 대해 알아보고자 한다.
+이를 위해 버전관리 시스템의 종류 및 어떤 식으로 버전관리 시스템이 발전하였는지를 알아보고, git의 개념 및 기본 명령어에
+대해 설명하고자 한다. 그리고 git의 동작 원리를 이해하기 위해 시나리오를 기반으로 다양한 git workflow 예시를 살펴보고자 한다.
+
+학습목표
+1. 버전관리 시스템의 개념과 필요성에 대해 이해한다.
+2. git의 개념과 기본적인 사용 방법에 대해 이해한다.
+3. 시나리오 기반으로 git의 동작 원리를 이해한다.
+
+학습하기
+1. 버전관리 시스템과 git
+1-1. 버전관리 시스템
+- 버전관리 시스템(VCS - Version Control System)은 파일 변화를 시간에 따라 기록했다가 나중에 특정 시점의 버전을
+  다시 꺼내올 수 있는 시스템
+- 소프트웨어 프로젝트를 진행하면서 발생하는 모든 변경사항을 관리해주며, 이러한 변경들이 어디서부터 발생했는지 
+  파악해 볼 수도 있음
+- VCS는 큰 프로젝트들을 관리하는 데 있어 필수적인 도구
+
+1-2. 버전관리 필요성
+- 버전 관리 시스템이 등장하기 전에는 오직 파일과 폴더만 존재
+  . 프로젝트의 개정사항을 기록하는 방법은 프로젝트 폴더를 복사해서 새로운 이름으로 저장하는 것
+- 버전 관리의 매우 단순한 형태
+  ex) 최종.xlsx, 최종_ver2.xlsx, 최종_ver3.xlsx
+- 만약 여러 명이 동시에 한 프로젝트를 수행한다면?
+- 산출물의 통합 및 관리는 어떻게 해야 하나?
+- 소스코드에서 무엇이 변경 되었는지?
+- 누가 소스코드를 변경하였는지?
+- 언제 소소코드가 변경되었는지?
+- 왜 그렇게 바뀐 건지?
+- 이전버전으로 복구(백업)은 어떻게?
+--> 버전관리시스템 git
+
+1-3. 버전 관리 시스템 종류
+- 로컬 버전관리(Local VCS)
+  . 클라이언트에 데이터베이스를 사용해서 파일의 버전을 관리
+- 중앙집중식 버전관리(CVCS, Centralized VCS)
+  . 파일 및 변경 이력 등을 클라이언트에서 서버로 옮겨 관리
+  . 중앙의 서버가 파일들과 이들의 변경 이력을 관리하고, 각 클라이언트는 서버에 
+    접촉해서 특정 버전의 스냅샷을 받아서 사용하는 형태로 동작
+  . 하나의 버전을 공유하므로 관리가 쉬우나 단순한 변경 이력도 서버를 거쳐야 하므로 속도가 느림
+- 분산 버전관리 시스템(DVCS, Distributed VCS)
+  . 중앙 서버에서 버전관리가 이루어지면서 동시에 각 클라이언트들이 모두 서버의 백업본을 가짐
+  . 분산 버전 관리 시스템에서는 서버가 죽거나 오프라인 상태에서도 버전 관리를 할 수 있고, 대부분의 
+    버전 관리가 로컬에서 이루어지므로 속도도 빠름
+  . 다만 중앙 집중 버전 관리 시스템에 비해 복잡하고, 동기화 문제가 있다는 단점이 있음
+
+1-4. git
+- Git은 리눅스 커널을 관리하기 위해 만들어진 일종의 분산 버전 관리 시스템
+- 리누스 토발즈(Linus Torvalds)가 개발
+- Git의 특징
+  . 빠른 속도
+  . 단순한 구조
+  . 비선형적인 개발(수천 개의 동시 다발적인 브랜치)
+
+1-5. git 핵심
+- git의 핵심은 데이터를 다루는 방법 : 변화의 순간을 기록한 snapshot
+- git은 데이터를 파일 시스템 스냅샷의 연속으로 취급
+
+1-6. git 무결성
+- git은 모든 데이터를 저장하기 전에 체크섬(해시)을 구하고 그 체크섬으로 데이터를 관리
+- 체크섬은 Git에서 사용하는 가장 기본적인 데이터 단위이자 Git의 기본 철학
+  . 체크섬 없이 어떠한 파일이나 디렉터리도 변경할 수 없음
+  . 예시) 7b1558c92a7f755d8343352d5051384d98f104e4
+
+1-7. git의 3가지 영역
+- git에서 작업할 때는 Working Directory, Staging Area, .git directory라고 하는 세 영역이 존재
+  . Working directory : 현재 작업중인 디렉토리 
+  . Staging Area : 상태 저장 명령을 통해 기록되 파일들이 보관되는 곳
+  . .git directory : Git 저장소(Repository)
+    - git을 이용해서 버전관리를 할 수 있게 해줌.
+    - Staging Area에 있던 기록들에 이 곳으로 옮겨지고 하나의 버전(기록)이 만들어짐.
+
+1-8. git의 라이프사이클
+- git의 3가지 영역에서 각 파일들은 '어떤 상태'를 가지게 되는데 Untracked, Unmodified, Modified, Staged로 나뉘어 짐
+  . Untracked : 파일 생성 되었지만 작업 내용이 git으로 추적(관리)되고 있지 않은 상태
+  . Unmodified : git으로 추적(관리)되고 있고, 내용이 수정되지 않은 상태
+  . Modified : git으로 추적(관리)되고 있으며, 내용이 수정된 상태
+  . Staged : Staging Area에 추가된 상태
+
+1-9. git 실습환경 구성하기
+- Codeonweb : 설치없이 web에서 실습 수행(권장)
+  . Codeonweb 회원 가입 후 로그인
+  . 실습 메뉴 선택
+  . 언어 메뉴에서 Git 선택
+  . 실습 환경 셋팅 완료
+
+
+2. git basics(1)
+2-1. 시나리오(1)
+- 저장소를 생성하고 작업물을 올리는 기본적인 git 워크플로우를 이해
+  . git init - git config - 작업 - git status - git add - git commit - git log
+- 기본 git 명령어 이해
+  . 저장소를 생성
+  . 스냅샷을 stage하고 commit
+  . config 설정하기
+  . 저장소 상태(status) 확인
+
+2-2. git 저장소 만들기 - git init
+- 주로 다음 두 가지 중 한 가지 방법으로 git 저장소를 만들어 사용
+  . 1. 아직 버전관리를 하지 않는 로컬 디렉토리 하나를 선택해서 git 저장소를 적용
+  . 2. 다른 어딘가에서 git 저장소를 Clone
+
+2-3. git 저장소 만들기 - git init
+2-3-1. git init
+- 아직 버전관리를 하지 않는 로컬 디렉토릴 하나를 선택해서 git 저장소를 적용
+- 저장소가 될 폴더 만들기 - mkdir git_project
+- 해당 폴더 내에서 git init 명령 실행
+
+- git init 명령은 .git 이라는 하위 디렉토리를 생성
+  . .git 디렉토리에는 저장소에 필요한 뼈대 파일(Skeleton)이 포함됨.
+- 이 명령만으로는 아직 프로젝트의 어떤 파일도 관리하지 않으며 향후 변경사항이 일어나느 경우 그 내용이 .git 폴더 안에 저장됨.
+
+2-4. git 환경 설정 - git config
+2-4-1. git config
+- git을 사용하기 위해 config에 이메일과 이름 등 계정정보를 입력
+- git config --global user.name "Your Name"
+- git config --global user.email your.email@example.com
+- 등록된 정보를 확인할 때 : git config --list
+--> 다양한 config가 있음
+--> 참고 : https://git-scm.com/book/ko/v2
+
+2-5. git 저장소 상태 확인하기 - git status
+2-5-1. git status
+- 작업을 수행하고 변경을 기록하기 전에 저장소의 상태를 확인하는 것이 필수
+- 저장소의 현재 상태를 확인하는 명령어
+
+--> test.sh 파일 생성
+--> No commit yest : 아직 commit이 없음.
+--> Untracked files : 파일 생성 되었지만 작업 내용이 git으로 추적(관리)되고 있지 않은 상태
+--> 현재 git 저장소가 test.sh의 존재 또는 변경사항을 모름
+
+2-6. git 저장소에 스냅샷을 stage하기 - git add
+2-6-1. git add
+- 변경된 파일/생성된 파일을 추가하기 위해 명시적으로 git에게 알려줄 필요가 있음
+- git add 명령어는 test.sh파일의 추적을 시작하기 위해 git에게 알려줌. AA
+
+--> Changes to be committed : 
+--> new file : test.sh
+--> New file이 생성되었음을 git이 인지하였음
+
+2-7. git 저장소에 스냅샷을 stage하기 - git add
+- add 행위의 의미 : commit을 위한 스냅샷(snapshot)에 test.sh을 추가
+- 스냅샷(snapshot) : 주어진 시점의 프로젝트 상태
+- 스테이징(staging) : 스냅샷을 생성하는 것을 나타내는 git 용어
+- 프로젝트 히스토리에 commit하기 전에 다수의 파일을 추가 혹은 삭제할 수 있기 때문에 
+  Staging은 연관된 변경사항들을 서로 다른 스냅샷으로 그룹지을 수 있는 기회를 부여
+  . ex : 의미 있는 수정 또는 개발이 발생하기 전 까지는 local 저장소에 staging을 여러 번 반복할 
+   수 있음, 서로 다른 snapshot끼리 오가며 소스코드를 수정할 수 있음.
+
+2-8. git 저장소에 스냅샷을 commit하기 - git commit
+2-8-1. git commit
+- 스냅샷을 stage 했으나, 여전히 프로젝트 히스토리에 커밋(commit)할 필요가 있음.
+- Commit 명령어 : git commit -m "커밋에 대한 설명"
+
+- 프로젝트의 버전을 저장하는 것은 다음 두 단계의 절차로 이뤄짐:
+  . Staging : 다음 commit에 어떤 파일을 파일에 포함할지 git에게 알려줌(snapshot)
+  . Committing : commit메시지와 함께 staged 스냅샷을 기록
+- git add 명령어로 파일을 staging하는 것은 실제 저장소에 영향을 주지는 않음. 
+  단지 다음 commit을 위하여 snapshot들을 모으는 것
+- 오로지 git commit를 실행한 이후에야 저장소에 스냅샷이 기록
+
+2-9. git 저장소 히스토리 확인 - git log
+2-9-1. git log
+- git status 는 현재 git이 commit하기 위해 staging 되어 있는 것이 없다고 알려줌
+- 프로젝트의 히스토리를 보기위해서는 git log 명령어를 사용해야 함
+
+- git log --pretty : --pretty옵션을 사용하면 원하는 포멧으로 커밋 히스토리를 조회할 수 있음
+- 다음 --pretty=oneline을 추가하여 한 줄로 표기한 것
+
+2-10. 시나리오(2)
+- 파일 수정 및 신규 파일 생성
+- 스냅샷을 stage하고 commit
+- 저장소 상태(status)확인
+
+2-11. 기존 파일 수정 및 신규 파일 생성하기
+- 새로운 수정사항이 생긴 것을 가정 : test.sh 수정 / test2.sh 파일 생성
+
+2-12. 수정/생성된 파일을 staging 하기 - git add
+- 이전 스냅샷 이후로 변경된 파일들을 stage할 수 있음 : git add [파일명1][파일명2]
+- 모든 수정사항을 한번에 staging하려는 경우 : git add .
+
+- git log를 출력해보면 방금 추가한 2개의 파일에 대한 history가 없음
+- git status에서만 staging 상황을 확인할 수 있음
+[ git status 명령어와 git log 명령어의 차이 ]
+--> status : staging 상황 확인
+--> log : commit을 확인 
+
+2-13. 수정/생성된 파일을 commit 하기 - git commit
+- staging 된 두 파일을 commit해 git 저장소에 snapshot으로 반영
+- git commit -m "이번 commit 에 대한 간략한 설명"
+
+2-14. 시나리오(3)
+- 새로운 파일 생성 후 staging 및 commit
+- 지금까지 진행된 모든 commit history 추적
+
+2-15. 새로 생성한 파일을 stage & commit 하기
+- test3.sh 파일을 생성해 stage & commit을 수행
+
+2-16. 스냅샷 히스토리 확인하기 - git log
+- git log를 통해 지금까지 진행된 모든 snapshot history(commit 이력)를 확인할 수 있음
+
+* 실습환경에서는 git config color 수정이 필요(git config --global color ui false)
+
+
+정리하기
+- git 의 동작 방식에 대한 이해
+  Working    - stage ->   Staged         - commit ->   Committed
+  Directory                   Snapshot                         Snapshots
+  - git init    - git add     - git status    - git commit   - git log
+
+- git 기본 명령어
+  . git init : 현재 폴더에 Git 저장소를 생성
+  . git status : 저장소 내 각 파일의 상태를 표시
+  . git add < file > : 다음 commit을 위해 파일 stage
+  . git commit : commit을 설명하는 메시지와 함께 staged 파일을 commit
+  . git log : 저장송의 commit 히스토리를 표시
+  . git config --global user.name "<name>" : 모든 저장소에 사용할 작성자 이름을 정의
+  . git config --global user.email <email> : 모든 저장소에 사용한 작성자 이메일을 정의
+
+
+1. 버전 관리 시스템(VCS - Version Control System)은 파일 변화를 시간에 따라 기록했다가 나중에 특정 시점의 버전을 다시
+   꺼내올 수 있는 시스템이다. 버전관리 시스템을 통해 소프트웨어 프로젝트를 진행하면서 발생하는 모든 변경사항을 
+   관리해 주며, 이러한 변경들이 어디서부터 발생했는지 파악해 볼 수도 있다.
+2. git 은 대표적인 분산버전관리 시스템으로 대규모의 소프트웨어 개발 프로젝트를 수행하는데 필수적이다. git의 핵심은 모든
+   변경사항을 snapshot으로 기록하고 snapshot의 무결성을 보장하는 것에 있다.
+3. git의 init, add, commit 및 기타 기본 명령어들을 통해 가장 기본적인 git workflow인 저장소 생성 --add --commit을 수행할 수 있다.

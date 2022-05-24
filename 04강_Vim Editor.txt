@@ -1,0 +1,402 @@
+4강. Vim Editor [ 이언 교수 ]
+
+학습개요
+본 강의에서는 Linux의 기본 편집기 중 하나인 Vim Editor에 대해 알아보고자 한다.
+세부적으로는 Vim의 필요성과 기본적인 사용방법에 대해 배워보고 Vim 사용에 있어 가장 중요한 4가지 Modes(Normal, Insert,
+Command, Visual)에 대한 개념과 사용 예시에 대해 알아보고자 한다. 그리고 Vim에서 주로 사용하는 Command들(Copy/Cut &
+Paste, del, Search & Replace등)을 통해서 어떻게 Text를 효과적으로 편집할 수 있는지를 학습하고자 한다.
+
+학습목표
+1. Vim의 기본적인 사용방법을 이해한다.
+2. Vim의 4가지 modes의 개념을 이해한다.
+3. Vim을 통해 파일의 생성, 입력, 수정, 삭제하는 방법을 이해한다.
+
+학습목차
+1. Vim 기초
+2. Vim Commands
+
+1. Vim 기초
+1-1. 리눅스의 편집기
+- 행 단위 편집기(라인 편집기)
+  . ed, ex(extended editor)
+  . 개발 및 사용이 너무 어려움
+- 화면 편집기
+  . vi (visual editor), vim
+  . 화면을 제공하는 편집기
+  . 개발 및 사용이 용이
+
+1-2. vi(visual editor) / vim(vi improved)
+- vi : unix/Linux에서 제공하는 파일 편집을 위한 오픈소스 text editor
+- vim : vi 호환 및 개선된 기능을 제공하는 text editor
+  . 다양한 platform 지원(Linux, Mac os, Windows, etc)
+- 왜 vi/im을 사용할 줄 알아야 하나?
+  . 실제 특정 도메인의 Linux 기반 개발환경에서는 고수준의 IDE
+   (eclipse, vscode, visual studoi, etc)를 쓰지 못하는 경우도 있음
+  . 분석가 또한 간단한 script 작성 및 shell programing은 vim을 통해 해결 가능
+
+1-3. vim 실행
+1-3-1. vim [파일명]
+- vim [파일명] 명령어로 vim editor를 실행
+[ vim 실행 화면 ]
+root@DESKTOP-409N3LE: /home# vim test_vim
+
+1-4. vim modes : vim는 4가지 모드를 가짐
+- Normal mode : 처음 문서를 열었을때 모드
+  . 화살표 또는 hjkl 키로 이동
+- Insert mode : 키보드를 입력하면 편집이 가능 (한글이나 MS Word의 편집 방식)
+- Command mode : 저장, 종료, 치환 등 부가적인 명령을 수행하는 모드
+- Visual mode : 텍스트를 블록 단위로 선택해 조작하는 모드 (마우스 드래그와 유사)
+
+- :를 통해 command mode로집입                        Esc를 통해 normal mode로 진입
+                    ←   :   -                        ← ESC -
+  Command      - ESC →        Normal       -   I    →   Insert
+                                        |      ↑
+                                       V     Esc
+  v를 통해 visual mode로 진입   ↓     |                 i를 통해 insert mode로 진입
+                                         Visual
+             
+
+1-5. vim modes - insert
+- Insert mode : 문서를 편집할 때 사용하는 모드
+- insert mode에서 cursor 이동은 방향키
+[ insert mode keys ]
+keys  |  설명
+a, A   | a(append)는 현재 커서 위치에서 한 칸 뒤로 이동한 후 입력 모드로 전환
+        | A는 현재 행의 끝으로 이동한 후, 입력 모드로 전환
+i, I     | i(insert)는 현재 커서 위치에서 입력 모드로 전환
+        | I는 현재 행의 맨 앞으로 이동 후, 입력 모드로 전환
+o,O    | o(open line)는 현재 행 아래에 새로운 행을 하나 만든 후 입력 모드로 전환
+        | O는 현재 행 위에 새로운 행을 하나 만든 후 입력 모드로 전환
+R       | 수정(replace)모드로 작동하므로 모든 글자는 덧쓰여짐
+
+1-5-1. insert mode 진입
+- 주로 i 명령어로 insert mode 진입 후 text 입력/추가.수정 가능
+- 입력이 끝나면 esc key로 normal mode 진입
+
+1-5-2. normal mode
+- Normal 모드는 다른 모드의 작업이 끝난 다음 다른 모드로 진입하기 전 단계
+- cursor : Normal mode에서 커지는 hjkl로 움직임(방향키가 되는 환경도 많음
+  h    j    k   l
+  ←  ↓  ↑   →
+  --> 방향키가 없는 키보드로 인해 방향키 없이 사용가능해야 하므로 hjkl을 매핑해서 사용했다.
+
+1-6. vim modes - normal
+1-6-1. normal mode : esc key
+- esc key로 다른 mode에서 normal mode로 진입
+- Normal mode는 gui가 없기에 다른 mode로 진입하기 위한 중간 역할을 수행
+
+1-7. vim modes - command
+1-7-1. command mode 진입 :  ":"
+- 명령 입력으로 여러 가지 일을 수행할 수 있는 모드
+- normal mode 상태에서 : 입력 후 사용
+- 파일 저장 및 종료 : command mode에서 수행
+keys        | 수행작업
+:w           | 현재의 파일명으로 파일 저장
+:w 파일명   | 지정한 파일명으로 파일 저장
+:q             | 작업 내용을 저장하였으면 vim 종료
+:q!            | 작업 내용을 저장하지않고 vim 종료
+:wq           | 작업 내용을 저장한 후 vim 종류
+:wq 파일명  | 작업 내용을 지정한 파일명으로 저장한 후 vim 종류
+
+
+1-8. vim modes- command
+1-8-1. command mode 진입 : ":"
+: wq command 실행 화면
+
+ls
+vim test_vim
+
+hello world
+hello world!
+hello world!!
+hello world!!!
+
+:wq
+--> :wq로 close
+
+
+1-9. vim modes - visual mode 필요성
+- vim에서 대부분의 명령을 수행할 때에는 범위를 지정할 수 있음
+  . 문서 전체를 지정하거나 특정 행 또는 특정 행으로부터 N개의 행 등 다양한 방법으로 범위를 지정할 수 있음.
+- 하지만 이런 방법은 범위를 지정할 때 범위의 시작과 끝을 명시해줘야하는 불편함이 있기 때문에 비주얼 모드가 제공됨
+- 비주얼 모드에서는 마치 마우스로 드래그 해서 범위를 지정하듯이 커서 이동을 통해 블록 단위로 범위를 지정할 수 있음.
+
+1-10. vim modes - visual
+1-10-1. visual mode 진입 : v
+- Normal mode에서 진입가능
+- mouse의 drag mode를 사용 가능(직관적이고 편리)
+keys     |  수행 작업
+v         | 일반 비주얼 모드로 현재 커서 위치에서 블록을 지정
+V         | visual line mode로, 현재 커서가 위치한 행에서 행 단위로 블록을 지정
+CTRL+v | visual block mode로, 열단위 블록을 지정
+
+hello world
+hello world!
+hello world!!
+hello world![!]!   #[] 커서 위치
+↓v명령어 입력    // visual 
+hello world
+hello world!
+hello world!!
+hello wor[ld!!]!    #Cursor 이동으로 block 지정 가능
+
+
+hello wor[l]d      #[] 커서 위치
+hello world!
+hello world!!
+hello world!!!   
+↓CTRL + v명령어 입력   // 열단위로 블록지정 visual block
+hello [worl]d         #Cursor 이동으로 열단위 block 지정 가능
+hello [worl]d!
+hello [worl]d!!
+hello [worl]d!!! 
+
+[ 실습 ]
+- vim을 활용해 test.py 파일을 작성 (실습환경에 python이 깔려있어야 함. Codeweb활용 추천)
+- "python test.py1 2"를 실행해 덧셈 결과가 출력되는지 확인(띄어쓰기 유의)
+
+[ test.py ]
+import sys
+
+num1 = sys.argv[1]
+num2 = sys.argv[2]
+
+print("sum of args:" + str(int(num1) + int(num2)))
+
+[ 실습 결과 ]
+- "python test.py 1 2"를 실행해 덧셈 결과가 출력되는지 확인(띄어쓰기 유의)
+
+test.py 실행 화면
+import sys
+
+num1 = sys.argv[1]
+num2 = sys.argv[2]
+
+print("sum of args : " + str(int(num1)) + int(num2)))
+
+bash-4.4$ python test.py 1 2
+sum of args : 3
+
+http://github.com/EON-LEE/Course-SoftwareEngineering.git 에서도 week4 폴더 안에서 test.py 다운 가능
+
+[ git을 활용한 실습 실행 방법 ]
+bash-4.4$ git clone https://github.com/EON-LEE/Course-SoftwareEngineering.git
+Cloning into 'Course-SoftwareEngineering' ...
+remote: Enumerating objects: 24, done.
+remote: Counting objects: 100% (24/24), done.
+remote: Compressing objects: 100% (16/16), done.
+remote: Total 2 (delta 2), reused 3 (delta 0), pack-reused 0
+Unpacking objects: 100% (24/24), done.
+bash-4.4$ cd wee4
+bash: cd: wee4: No such file or directory
+bash-4.4$ ls
+Course-SoftwareEngineering
+bash-4.4$ cd Course-SoftwareEngineering/week4
+bash-4.4$ python test.py 1 2
+sum of args : 3
+bash-4.4$
+
+
+2. Vim Commands
+2-1. copy / paste command
+2-1-1. copy & paste
+- 파일 내 문자를 복사 및 붙여넣기/잘라내기 시 사용
+- normal mode 상태에서 작업을 수행
+
+keys        |  수행 작업
+y            | 현재 문자를 버퍼로 복사
+yy           | 현재 행을 버퍼로 복사
+p(소문자)  | 현재 행 다음에 버퍼 내용 삽입
+P(대문자)  | 현재 행 위쪽에 버퍼 내용을 삽입
+dd, :d      | 현재 행을 잘라내기
+
+- copy(yy) & paste(p) 실행 결과
+hello world          
+hello world!
+hello world!!
+hello wor[l]d!!!  # [l] 커서위치 yy명령어 입력
+
+hello world          
+hello world!
+hello world!!
+hello wor[l]d!!!   #4번째 줄에서 Cursor 위치 p 명령어 입력
+
+hello world          
+hello world!
+hello world!!
+hello world!!!
+[h]ello world!!!   # [h] 커서위치  
+
+
+- cut(dd) & paste(p) 실행 결과
+hello world          
+[h]ello world!      # [h] 커서위치 : 2번째줄 Cursor 위치 dd 명령어 입력
+hello world!!
+hello world!!! 
+
+hello world          
+[h]ello world!!     # [h] 커서위치 : [h]ello world!  줄 없어짐.
+hello world!!! 
+
+hello world          
+hello world!!
+hello world!!!   
+[h]ello world!     # [h] 커서위치 :  3번째 줄 Cursor 위치 p 명령어 입력
+
+
+2-2. del command
+2-2-2. del
+- 파일 내 문자를 삭제시 사용
+- normal model상태에서 작업을 수행
+- 삭제와 잘라내기는 vim에서 동일한 동작으로 인식
+
+keys        |  수행 작업
+x            | 커서에 위치한 문자 삭제 (<Delete> 키와 같음)
+dd/, :d      | 현재 행을 삭제
+D           | 현재 컬럼 위치에서 현재 행의 끝부분까지 삭제
+J            | 아래 행을 현재 행의 끝에 붙임(아래 행의 앞부분 공백은 제거됨)
+
+- x command 실행 결과
+hello world          
+hello wo[r]ld!     # [r] 커서위치 : x 명령어 입력
+hello world!!
+hello world!!!   
+
+hello world          
+hello wold!     
+hello world!!
+hello world!!!    
+1. 삭제할 곳에 cursor 위치
+2. x 명령어 입력
+3. "r" 문자 삭제
+
+- J command 실행 결과
+hello world          
+hello world!      
+hello world!!
+hello wor[l]d!!!   # [l] 커서위치 : 4번째 줄 Cursor 위치 대문자 J 명령어 입력
+
+hello world          
+hello world!     
+hello world!![ ] hello world!!! 
+
+2-3. Visual mode에서 copy & paste & del
+- Visual mode 에서 범위를 지정한 후 동일하게 명령어를 사용할 수 있음
+
+
+2-4. undo/redo command
+2-4-1. undo/redo
+- undo : 마지막 명령을 취소 (normal mode 상태에서 작업을 수행)
+- redo : 취소한 명령을 다시 재수행 (normal mode 상태에서 작업을 수행
+
+key     |  수행작업
+u        | 바로 이전에 행한 명령 한 개를 취소
+CTRL+r | 바로 이전에 취소했던 명령을 다시 실행
+
+hello world          
+hello world!     
+hello world!![ ] hello world!!!  # u 명령어 입력
+
+hello world          
+hello world!     
+hello world!!
+hello world!!!  # CTRL + r 명령어 입력
+
+hello world          
+hello world!     
+hello world!![ ] hello world!!! 
+
+2-5. replace command
+2-5-1. replace
+- 파일 내 글자나 문장을 대체
+- normal mode 상태에서 작업을 수행
+
+key     |  수행작업
+r        | 글자 하나를 변경할 때 사용
+CW     | 단어의 일부나 전체를 변경할 때 사용(해당 단어 삭제 후 insert mode 진입)
+c$      | 해당 중 전체를 변경할 떄 사용(전체 줄 삭제 후 insert mode 진입)
+
+r command 실행 결과
+hello world          
+[h]ello world!     # 대체할 곳에 Cursor 위치 r명령어 입력 대체 단어 입력
+hello world!!
+hello world!!!  
+
+hello world          
+[c]ello world!    
+hello world!!
+hello world!!!  
+
+
+CW command 실행 결과
+hello world          
+[h]ello world!     # 대체할 곳에 Cursor 위치 CW명령어 입력 대체 단어 입력(insert mode)
+hello world!!
+hello world!!!  
+
+
+2-6. find command
+2-6-1. find
+- 파일 내 keyword 검색시 사용
+- normal mode 상태에서 작업을 수행
+
+key       |  수행작업
+/문자열  | 현재 위치부터 파일 앞쪽으로 문자열 탐색
+?문자열  | 현재 위치부터 파일 뒤쪽으로 문자열 탐색
+n          | 다음 문자열 탐색
+N          | 역방향으로 문자열 탐색
+
+?hello 검색
+
+
+2-7. search/replace command
+2-7-1. search/replace
+- 파일 내 keyword를 찾아 변경을 수행
+- normal mode 상태에서 작업을 수행
+
+key                                 |  수행작업
+:%s/ 찾는단어/변경할 단어/g   | 찾는 단어를 변경할 단어로 모두 변경
+:%s/ 찾는단어/변경할 단어/gc  | 찾는 단어를 변경할 단로 모두 변경할 때 수정할지 안 할지를 사용자에게 물음
+:%s/ 찾는단어/변경할 단어/l    | 대소문자 구분없이 찾는 단어를 검색 후 변경할 단어로 모두 변경
+:#,#s/ 찾는단어/변경할 단어/g  | 줄번호(#) 사이의 찾는 단어를 변경할 단어로 모두 변경  - 범위선택
+
+- Search/replace는 강력한 기능이지만 정규표현식(Regular expressions)과 조합하여 사용할 때 그 효과가 극대화됨
+  . 정규표현식(Regular Expressions) : 검색에서 사용할 매칭되는 같은 문자들의 패턴
+  . 최적화된 텍스트 검색을 위해 정규표현식을 사용
+  . 예시) 특정 txt 파일내 한 줄의 점(.) 뒤부터 문자를 모두 지우고 싶다면, :%s/\..\+//g
+
+2-8. 다중창 열기
+2-8-1. :split(sp), :vsplit(vs)
+- 동시에 여러 파일을 확인해야 하는 경우 사용
+- :vs : 수평분할 / 가로 방향으로 여럭 칸 / 왼쪽 오른쪽
+- :sp : 수직분할 / 세로 방향으로 여러 칸 / 위세 아래
+- :vs {filename.txt} : 해당 파일을 분할 창에 열기
+- :vs # 지정 안하면 그냥 동일 파일 열리거나 빈창
+- Ctrl + ww : 창끼리 커서 이동
+- :20vs : 20칸 짜리 수평 분할
+- :10sp : 10칸 짜리 수직 분할
+- Ctrl+w,= : 동일 비율 크기 조절
+- Ctrl+w,_ : 현재 창 높이 최대화
+- Ctrl+w,| : 현재 창 너비 최대화
+
+2-9. vim 자동완성 기능
+2-9-1. ctrl+n / ctrl+p
+- 현재 버퍼에 입력된 키워드를 기반으로 자동완성을 제공
+
+
+정리하기
+- vim modes의 이해
+  . insert/normal/command/visual mode
+- 다양한 vim commands의 사용법 이해
+  . 기본 명령어들 : copy & paste, del, search & replace, undo, redo
+  . 화면 분할 기능 : :sp, :vs
+  . 자동 완성 기능 : ctrl+n, ctrl+p
+
+
+정리하기
+1. Vim은 Text 기반 Interface를 제공하는 Linux에서 파일을 편집할 수 있는 강력한 editor이다. Vim의 사용을 위해선 Vim의 4가지 modes의 
+   이해가 필수인데, Insert mode는 입력/편집 mode, Command mode는 저장, 종료와 같은 command를 실행하는 mode, Visual mode는
+   block 선택 기능을 제공하는 mode, Normal mode는 일반 mode로 나머지 다른 mode들로 넘어가기 위해 필요한 mode이다.
+2. Vim에서 문서를 효과적으로 편집하기 위해서는 다양한 commands의 이해가 필요하다. Vim에서는 Copy & Paste, cut, del과 같은 기본적인
+   command를 제공하며, 문서의 탐색을 위해 search & replace 기능을 제공한다.
+3 개발 생산성 향상을 위해 Vim은 화면 분할 기능 및 Text 자동완성 기능 또한 제공한다.

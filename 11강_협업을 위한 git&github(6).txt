@@ -1,0 +1,174 @@
+11강. 협업을 위한 git&github(6) [ 이언 교수 ]
+
+학습개요
+본 강의에서는 github을 협업할 때 발생할 수 있는 다양한 시나리오를 통해 github의 사용방법에 대해 알아보고자 한다. 세부적으로 여러 명이 동시에
+github을 사용할 때 일어날 수 있는 상황에 대해 예시를 통해 배워보고, 원격 저장소의 정보를 가져와 병합하는 방법에 대해 예시를 
+통해 살펴보고자 한다.
+
+학습목표
+- github으로 협업할 때 발생할 수 있는 다양한 시나리오를 통해 github 사용방법을 이해한다.
+1. 여러 명이 협업하는 상황에서의 github의 사용방법에 대해 이해한다.
+2. git fetch 명령을 통해 원격저장소의 정보를 확인하는 방법에 대해 이해한다.
+3. 원격 저장소의 변경사항을 로컬 저장소로 변경하는 방법에 대해 이해한다.
+
+학습목차
+1. github심화(1)
+2. github심화(2)
+
+1. github심화(1)
+1-1. SSH원격접속을 통해 github 연결하기
+- SSH : Secure Shell 의 줄임말
+  . 보안이 강화된 안전한 방법으로 정보를 교환하는 방식
+  . shell을 통해서 명령어를 입력할 수 있는데, 이 명령어를 내 컴퓨터가 아닌 네트워크로 다른 컴퓨터에 전달해주고
+    결과를 받아볼 수 있게 해주는게 SSH
+  . SSH는 사용자, 패스워드나 여러가지 인증 방법을 지원함. 그 중에서도 편리성이나 안정성 면에서 추천하는 방식이 공개키 인증방식임
+
+- ssh 인증 방식을 사용한 github 연결
+  . key 생성
+  . 인증시 사용 : client - private key --- <ssh> ---> server - public key
+- github를 사용할 때 SSH와 키는 왜 필요한가요?
+  . 안전하게 외부 git 서버에서 코드를 Clone하거나 Push하려면 SSH프로토콜을 사용
+  . 여러명이 작업하는 경우 모두에게 token을 공유하는 것 보다 개인별 인증을 하는 것이 보안 측면에서 바람직함
+  --> token을 사용하는 경우는 한 패스워드를 모든 사용자가 공유해서 사용하는 방법과 동일하므로 개인별 인증을 사용
+
+- ① ssh key 생성하기
+  . openssl 패키지가 필요
+  . ssh-keygen 명령을 통해 public/prvate key 생성
+  
+- ② github에 public key 등록하기
+  . Public key를 직접 github에 등록해야 함
+  . cat "public key"로 public key 확인 및 복사
+  . github접속 후 setting에서 ssh and GPG keys 선택
+  . 복사한 ssh key를 등록
+
+- ③ SSH주소로 github 연결하기
+  . SSH 주소를 remote로 등록해 github 연동
+  
+- 여러명이 github함께 사용하기
+  . 협업 시나리오
+    - github 복제하기
+    - git_home에서 작업하고 github에 올리기
+    - git_office에서 최신버전 내려받아 작업하기
+
+- github복제하기
+  . 원격 저장소를 기존에 연결된 지역 저장소 외에 다른 로컬 저장소에서 사용하려면 원격 저장소에 담기 내용 전체를
+    로컬 저장소로 가지고 와야 함
+  . 원격 저장소를 로컬 저장소로 똑같이 가지고 오는 것을 '복제한다' 또는 clone이라고 함
+  . 2대 컴퓨터(git_home, git_office)에 같은 원격 저장소를 복제하여 상태를 확인
+
+  . 10주차에서 각자 생성한 github repository를 git_home directory로 clone
+  . git clone "cloning 하고 싶은 repository 주소" "복사할 directory"
+  . 복사할 directory가 없다면 자동 생성
+
+  . git_office directory에도 똑같은 방식으로 cloning을 수행
+  . 양쪽 directory에 똑같은 commit이 있는지 확인
+  --> log가 깨진다면 git config-global color.ui false 명령 실행
+
+- git_home에서 작업하고 github에 push하기
+  . 같은 원격 저장소를 복제한 2대 컴퓨터(git_home, git_office) 중 한곳 (git_home)에서 commit을 만들고 push를 수행
+  . (config 설정후) git_home에서 test.sh를 수정하고 saging & commit
+  . remote repository가 잘 설정되어 있는지 확인한 후 commit을 github으로 push
+  . github에서도 git_home 에서 commit한 내용이 반영되었음을 확인할 수 있음
+  . commits를 눌러 ㅐ당 commit에 대한 내용 확인
+
+- git_office에서 최시버전 pull해서 작업하기
+  . git_home에서 commit을 push하였기 때문에 clone 했을 때와 github의 status가 다름
+  . 따라서 git_office에서 작업하려면 먼저 github의 최신 commit을 가지고 와야 함
+
+  . github repo를 clone하였기 때무네 git_office의 main branch가 이미 origine에 연결이 되어 있음.
+  . git pull 명령으로 remote repository에 새로 올라온 commit을 가져옴
+
+  . test.sh를 수정하고 staging & commit 수행
+  . commit을 github으로 push하여 최신 상태 반영
+
+  . git_office에서 push한 commit이 github에 반영되었음을 확인할 수 있음
+
+  . 다시 git_home에서 작업할 때는 github의 satatus가 변하였기 때문에 최신 commit을 가져오기 위해 git pull을 다시 수행해야 함
+
+- 협업을 위해서 로컬 저장소와 원격 저장소의 동기화가 중요
+  1. add test.sh : git_home push
+     - git_home : add test.sh create test4.sh
+     - git_office : Create test4.sh
+  2. add test.sh : git_office pull
+     - git_home : add test.sh Create test4.sh
+     - git_office : add test.sh Create test4.sh
+  3. Office work : git_office push
+     - git_home : add test.sh Create test4.sh
+     - git_office : office work add test.sh
+  4. Office work : git_home pull
+     - git_home : office work add test.sh
+     - git_office : office work add test.sh
+     
+
+2. github심화(2)
+- git pull 명령은 원격 저장소의 최신 commit을 로컬 저장소에 병합시켜 줌.
+  . 하지만 최신 commit을 합치기 전에 원격 저장소에 어떤 변화가 있는지 먼저 살펴봐야 함
+- 원격 저장소 상태 확인
+  . 원격 저장소 내 브랜치의 상태 확인
+  . 원격 저장소 내 브랜치에서 정보를 가져오는 방법
+  . 가져온 정보를 지역저장소에 병합하는 방법
+
+- 원격 저장소 내 branch의 상태
+  . 로컬저장소의 master branch처럼 원격 저장소도 기본적으로 master branch가 생성됨(github에서는 main branch)
+  . github의 commit status를 도식화하면 아래와 같음
+
+  . git_home에서 git log로 commit상태를 확인
+  . HEAD-> main(master)는 이 commit이 지역 저장소의 최종 commitdmf dmlal
+  . origin/main 은 원격 저장소의 최종 commit임을 나타냄
+
+  . git_home에서 f1.txt를 생성히고 commit을 수행
+  . log를 보면 HEAD -> main이 commit 한 'create f1.txt at home'을 가리킴
+  . 하지만 origin/main는 이전 commit을 가리킴
+
+  . push 명령으로 앞서있던 로컬 저장소의 commit을 github에 올림
+  . log를 확인해보면 지역저장소와 원격저장소의 HEAD가 같은 commit을 가리키는 것을 확인할 수 있음
+  
+  . git hub에도 최신 commit이 반영되었음을 확인할 수 있음
+
+- 원격 branch 정보 가져오기
+  . 작업 시, pull 명령을 통해 로컬 저장소와 원격 저장소의 status를 항상 일치시키는 것은 매우 중요
+    - 하지만 원격 저장소의 일부 commit 만 가지고 와서 병합해야 할 상황이 있을 수 있음
+  . 이런 경우 git fetch 명령을 활용해야 함
+    - git fetch 명령으로 원격 저장소의 정보를 가져올 수 있음
+    - git pull 명령이 원격 저장소의 commit을 가져와서 무조건 지역 저장소와 합친다면, git fetch 명령어는 원격 branch에 어떤 변화가 있는지
+      확인하고 그 정보만을 가지고 옴  
+    - 팀 작업시 다른사람이 수정한 source를 확인하고 지여 저장소와 합치고 싶다면 git pull 대신 git fetch를 사용해 commit만을
+      가지고 온 다음 병합을 수행할 수 있음
+
+  . 현재 git_home 에서 생성된 commit을 git_office는 모르는 상황임
+  . (git_office에서) git fetch 명령을 통해 github이 변화된 정보를 가지고 옴
+  . pull 과는 다르게 신규 commit 내용(현재 상황에서는 fi.txt)가 없음.
+
+  . git fetch 명령은 원격 저장소의 최신 commit을 로컬저장소와 바로 합치지 않기 때문에, git log를 보면
+    origin/main, origin/HEAD가 보이지 않음
+  . git status를확인하면, 현재 branch가 origin/main에 비해 1개의 commit이 뒤쳐졌다고 나타남
+  . fetch 정보는 FETCH_HEAD라는 branch로 가져오면 바로 반영되지 않음
+  
+  . github에서 fetch해서 가져온 최신 commit을 살펴보고 싶다면 FETCH_HEAD로 checkout해서 확인을 할 수 있음
+  . FETCH_HEAD로 checkout 후 log를 살펴보면 최신 commit에 origin의 HEAD정보가 표시되어 있음을 알 수 있음.
+
+- 가져온 정보를 로컬 저장소에 병합하기
+  . 최신 commit을 병합하려면 git pull 명령을 사용하거나 merge 명령으로 fetch해온 FETCH_HEAD branch 를 병합하면 됨
+
+- git pull vs git fetch
+  . git pull 명령은 git fetch 와 git merge FETCH_HEAD 명령을 합친 것과 같은 기능을 함.
+    - 즉, git fetch를 사용해 원격 branch를 가져온 다음 git merge를 사용해 원격 branch와 현재 로컬의 branch를 합쳐주는 것을
+      git pull 명령으로 한번에 수행할 수 있음.
+
+
+정리하기
+- SSH 원격 접속을 활용한 github 연결하기
+  . SSH인증방식(public/private key)를 활용해 github에 연결 가능
+- 원격 저장소 정보 가져오기 
+  . git fetch "원격 저장소 주소"
+- 원격 저장소 변경하기 병합하기
+  . git fetch + git merge FETCH_HEAD
+  . git pull "원격 저장소 주소"
+
+
+정리하기
+1. 작업을 수행할 때 git fetch 명령을 통해 원격 저장소의 변경 내용을 미리 파악하고 병합 여부를 결정할 수 있다.
+   이를 통해 협업 시 발생할 수 있는 코드 병합 이슈를 사전에 방지할 수 있다.
+2. 원격 저장소의 변경 내용을 로컬 저장소로 병합하기 위해서는 크게 2가지 방법이 있다.
+   첫 번쨰는 git fetch 명령을 통해 원격 저장소의 변경 사항을 Fetched_HEAD branch로 받아오고, 그 다음 로컬 저장소의
+   branch와 Fetched_HEAD branch를 병합하는 방식이다. 두 번째 방식은 pull 명령을 통해 첫 번째 방식을 한 번에 수행하는 방식이다.

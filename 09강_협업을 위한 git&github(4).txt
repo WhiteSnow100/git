@@ -1,0 +1,184 @@
+9강. 협업을 위한 git&github(4) [ 이언 교수 ]
+
+학습개요
+본 강의에서는 git branch를 병합하는 방법에 대해 알아보고자 한다. git merge 명령을 통해 다양한 상황에서 branch를 merge하는 방법을 알아보고
+conflict가 일어나는 상황과 이의 해법에 대해 살펴보고자 한다. 그리고 또 다른 병합방법인 git rebase에 대해 배워보고 merge와 rebase의 차이에 대해 알아본다.
+
+학습목표
+1. 다양한 상황에서 git branch를 병합하는 방법에 대해 이해한다.
+2. git branch간 충동(conflict)을 해결하고, git rebase를 통해 git commit을 재정렬하는 방법에 대해 이해한다.
+3. git branch를 관리하는 방법에 대해 이해한다.
+
+학습목차
+1. branch 병합(2)
+2. branch 병합(3)
+3. branch 관리
+
+1. branch 병합(2)
+1-1. branch merge(병합) 시나리오
+- 서로 다른 파일을 가진 브랜치 병합하기
+- 서로 같은 파일 내 다른 위치를 수정했을 때 브랜치 병합하기
+- 서로 같은 파일 내 같은 위치를 수정했을 때 브랜치 병합하기
+
+1-2. 서로 같은 파일 내 다른 위치를 수정했을 때 브랜치 병합하기
+- 새 branch에서 생성된 파일 master branch로 병합하기
+- git 저장소를 생성하고 config 설정
+
+- master branch에서 work.txt를 생성하고 commit
+- company_1 branch 생성
+- master branch에서 work.txt 수정 후 commit
+- company_1 branch checkout
+- work.txt 수정 후 commit
+- company_1 branch 의 log를 통해 현재 상태 확인
+  --> [ git log --online --branches 실행 화면]
+- master branch에서 company_1 branch merge 하기
+  --> bash-4.4$ git merge company_1 --no-edit 
+  --> --no-edit : vim editor가 켜지지 안고 기본으로작성된 텍스트가 comment로 commit이 수행됨
+
+- master branch에서 company_1 branch merge하기
+                                                                                     [ HEAD ] : HEAD가 master branch를 가리킴
+                                                                                    [ master ] : master가 Merge branch company_1 commit을 가리킴
+  ①work1 ---┬---> ② master work2----------------------------┬----->④ Merge branch company_1
+                 └------------------------>③ company_1 work2 --┘
+                                                  company_1
+
+
+1-3. 서로 같은 파일 내 같은 위치를 수정했을 때 브랜치 병합하기
+- 새 branch에서 생성된 파일 master branch로 병합하기
+- git 저장소를 생성하고 config 설정
+
+- master branch에서 work.txt 를 생성하고 commit
+
+- company_1 branch 생성
+- master branch에서 work.txt 수정 후 commit
+
+- company_1 branch checkout
+- company_1.txt commit
+
+- master branch에서 company_1 branch merge 하기
+  --> git checkout master 
+  --> CONFLIT (content) : Merge conflict in work.txt  
+  --> Automatic merge failed; fix confilicts and then commit the result 
+  --> 충돌로 인해 merge 되지 않았음을 알려 주는 메세지
+
+- conflict 난 내용을 확인해 수정하기
+- conflict 난 내용은 자동으로 수정할 수 없으므로 user가 직접 충돌 난 내용을 해결한 후 commit 해야 함
+
+- 수정 후 master branch에서 compnay_1 branch merge 하기(commit)
+
+- master 와 branch 가 모두 수정이 일어나, merge시 conflict 의 가능성이 있음.
+
+                    [ master ]                                                                                                                 [ HEAD ]  
+  ① work1 --┬--> ② master work2                                                                                                    [ master ]
+                └-------------------> ③ company_1 work2    ===>  ① work1 --┬-->② master work2 ------------┬---->④ Merge branch company_1
+                                      [ company_1 ]                                          └------->③ company_1 work2 ---┘
+                                         [ HEAD ]                                                       [ company_1 ]  
+                                        
+1-4. Branch merge 원리 : fast-forward merge
+- master branch에서 신규 branch를 생성한 후, master branch에 아무런 변화가 없다면
+  (master branch 내에서 새로운 commit을 만들지 않았다면) 신규 branch를 병합하는 것은 매우 쉬운일
+- 이 경우 merge를 fast-forward merge라 함
+  --> fast-forward : 빨리감기
+  --> 새로운 commit은 생기지 않음 : 연결만 시켜줌(참조가 이동하는 모습)
+
+- 그림 : 출처 - https://wididocs.net/153693
+
+1-5. Branch merge 원리 : 3-way merge
+- 두 branch가 base에서 분리된 commit을 참조할 때 git merge 명령을 실행하면 새로운 commit이 생성됨
+- 이와 같은 merge를 3-way merge라고 함
+  --> 3가지 상황을 모두 고려한 merge가 되어야 함
+  --> 최초 base 상황, base 소스 commit 상황, base에서 branch된 소스의 commit 상황
+  
+- 출처 : https://wididocs.net/153693
+
+
+2. branch 병합(3)
+2-1. rebase
+- 공통 base(조상)를 가진 두 branch에서 하나의 branch의 base를 다른 branch의 최신 commit을 base로 하게끔 재정렬 하는 것을 의미
+- git commit log를 깔끔하게 관리 할 수 있음
+
+                    [ master ]                                                                      [ master ]                                                                                   
+  ① work1 --┬--> ② master work2                                      ① work1 ----> ② master work2 --┐               
+                └-------------------> ③ company_1 work2    ===>                                              └------->③ company_1 work2  
+                                      [ company_1 ]                                                                              [ company_1 ]
+                                         [ HEAD ]                                                                                     [ HEAD ]
+   --> 이렇게 하는 이유 : merge에 비해 commit 수행 로그를 깔끔하게 관리할 수 있는 장점
+   --> 추척시 용이
+
+- git clone 을 통해 week8 주차 실습 script 받기
+- week8_1.sh script 실행
+
+- 가장 최신 commit을 취소(merge한 commit) 하여 branch를 분리함
+  --> git reset --head HEAD^ : commit 취소
+
+- Git rebase [ 정렬할 branch 명 ]
+- 분리된 branch를 각자의 최신 base를 기준으로 재정렬함
+  --> git checkout company_1
+  --> git rebase master
+
+- 연결된(재정렬된) branch를 master branch에 병합
+
+- merge vs rebase
+  . merge : merge는 실행한 브랜치로 병합을 실행하고 새로운 커밋이력을 생성
+  . rebase : 공통 base(조상)를 가진 두 브랜치에서 하나의 브랜치의 base를 다른 브랜치의 최신 commit을 base로 하게끔 재정렬 하는 것을 의미
+
+ [ merge flow ]
+                ┌---> (BI23) -> (BI24) ------┐
+ (AI23) -> (AI24) -> (AI25) -> (AI26) -> (CI25)
+
+ [ rebase flow ]
+                ┌--> (BI23) -> (BI24) ---┐
+ (AI23) -> (AI24)                        (AI25) -> (AI26)  
+ master 브랜치에서 sub 브랜치를 기준으로 rebase시켰기 때문에 sub브랜치를 베이스(base)로 커밋이력이 정렬
+
+
+3. branch 관리
+- git branch관리 시나리오
+  . branch 삭제하기
+  . HEAD branch 이동하기
+
+3-1. branch 삭제하기
+- 병합된 branch 삭제 : git branch -d branch-name
+- 병합되지 않은 branch를 삭제 : git branch -D branch-name
+  --> git checkout master
+  --> git branch -d company_1
+
+3-2. HEAD branch 이동하기
+- git checkout 명령을 통해 branch간 이동이 가능
+- 실습을 위해 git 저장소 생성 및 config 설정
+  --> mkdir git_project
+       cd git_project
+       git init
+
+- c1.txt 파일 생성후 commit
+
+- sub branch 생성
+  --> git branch sub
+
+- c2.txt 생성 후 commit(master branch)
+  --> git add c2.txt
+       git commit -m "c2"
+
+- sub branch로 이동(checkout) 후 s1.txt 생성 및 commit
+  --> git checkout sub
+       git add s1.txt
+       git commit -m "s1"
+
+
+정리하기
+- branch 병합
+  . Merge는 서로 다른 두 branch의 결과를 하나의 branch로 합침
+    - branch 과정 중 같은 곳을 수정한 경우 conflict가 발생할 수 있으므로 주의를 요해야 함
+  . Rebase는 브랜치의 베이스를 다시 정의함으로써 새롭게 커밋 라인을 정리하여 히스토리를 깔끔하게 볼 수 있게 해줌
+- branch 관리
+  . Checkout으로 branch의 HEAD가 가리키는 commit을 관리할 수 있음
+  . 삭제를 위해서는 git branch -d/-D [ 브랜치명 ]
+
+
+정리하기
+1. git merge는 두 branch의 결과를 하나의 branch로 병합하는 방법이다. git merge시 3-way merge의 경우는 base, head, 병합할 branch를 
+   동시에 고려해야하기 때문에 conflict가 날 우려가 있다. conflict가 발생한 경우, 충돌 내역을 확인해 수작업으로 고쳐야 한다.
+2. git rebase 명령은 브랜치의 베이스를 다시 정의함으로써 새롭게 commit ㄹ인을 정리할 수 있는 기능이다.
+   rebase를 통해 git commit history를 깔끔하게 정리할 수 있다.
+3. git branch를 삭제하기 위해서는 git branch 명령에 -d/-D 옵션을 추가해 수행이 가능하며 HEAD Branch를 이동하기 위해서는 git checkout명령을 수행해야 한다.
+

@@ -1,0 +1,539 @@
+2강. Linux Fundamentals(1) [ 이언 교수 ]
+
+학습개요
+본 강의에서는 데이터 분석 및 소프트웨어 개발 환경 구성에 필수인 Linux 에 대한 이해 및 Linux File System에 대해 알아보고자 한다.
+Linux가 익숙하지 않은 Data Scientist를 위해 Linux system의 개념 및 특성에 대해 배우고 Terminal 환경에서 command 기반 인터페이스가
+기본인 Linux의 원활한 사용을 위해 기본적인 명령어 사용법에 대해 설명하고자 한다. 그리고 Linux File system의 개념과 구조에 대해 
+학습하고, File system을 다루기 위한 주요 command에 대해 알아보고자 한다.
+
+학습목표
+1. Linux system의 특징 및 기본 명령어 사용법을 이해한다.
+2. Linux File system의 개념과 구조에 대해 이해한다.
+3. Linux File system에서 사용 가능한 주요 명령어들의 사용법을 이해한다.
+
+- Linux의 기본 배경을 이해한다.
+  . 리눅스의 특징
+  . 리눅스의 기본 명령어 사용버버
+- Linux File system을 이해한다.
+  . Linux File system의 개념과 구조
+  . File system관련 기본 명령어의 사용법
+
+학습목차
+1. Linux 개요
+2. Linux 실습환경 구성
+3. File System(1)
+
+
+1. Linux 개요
+1-1. Operating System(OS)
+- Operating System : 운영 체제
+- 사용자와 컴퓨터간의 인터페이스로서 동작하는 시스템 소프트웨어
+- 시스템 하드웨어 관리, 응용프로그램 실행을 위한 하드웨어 추상화, 공통 시스템 서비스 등을 제공
+--> Linux, Window10, MacOS, RedHat 
+
+1-2. Linux
+- Linus'*nix(Linus B. Torvalds에 의해 개발)
+- Pc를 위한 효출적인 유닉스 시스템
+- Source code가 공개되어 있는 대표적인 오픈소스 소프트웨어.
+  . Open Source Committee 들에 의해 기능 추가 및 확장이 활발히 일어남
+  . 공용 도메인 상의 무료 OS
+- 다양한 플랫폼에 포팅 가능
+  . PC, Workstation, Server등에서 많이 사용 됨
+
+1-3. Linux의 특징
+- Multi user, Multi-tasking
+- 다양하고 뛰어난 네트워크 환경 및 파일 시스템 지원
+- 유연성과 확장성, 안정성, 보안성 등이 뛰어남
+- 우수한 가격 대비 성능비 : PC급 서버에서 Enterprise급 성능
+- 다양한 응용 프로그램 제공
+  . 셀(Shell) 과 기본 명령어, GUI 편집기(vi, vim, nano, etc), 서버 및 클라이언트 프로그램(웹, 메일, FTP 등),
+    개발도구(C, C++, Java, Python, etc) 등
+- 다양한 배포판 존재(대표적으로 redhat, centos, Ubuntu, debian, etc)
+
+1-4. Linux Structures
+- HW : CPU/RAM/Storage/Device/etc
+- Kernel : os의 core, HW Control service 기능 제공
+  . Process / Memory / File system
+  . Device management
+  . HW Resource control
+- Shell : 리눅스의 핵심인 커널과 사용자를 연결해주는 인터페이스
+  . kernel이 제공하는 서비스에 대한 인터페이스를 사용
+  . script programming
+- Utility & User applications : 각종 사용자 프로그램들
+
+1-5. Kernel의 역할
+- 프로세스 관리(Process management)
+  . 여러 프로그램이 동시에 실행될 수 있도록 프로세스들을 CPU 스케줄링하여 관리
+- 파일 관리(File management)
+  . 디스크와 같은 저장장치 상에 파일 시스템을 구성하여 파일을 관리
+- 메모리 관리(Memory management)
+  . 메인 메모리가 효과적으로 사용될 수 있도록 관리
+- 통신 관리(Communication management)
+  . 네트워크를 통해 정보를 주고받을 수 있도록 관리
+- 주변장치 관리(Device menagement)
+  . 모니터, 키보드, 마우스와 같은 장치를 사용할 수 있도록 관리
+
+
+2. Linux 실습 환경 구성
+2-1. 실습환경 구성하기
+- Linux 계열 OS Users : 별도의 환경 구성 없이 실습 가능
+- Windows OS Users :
+  . WSL2(Windows Subsystem for Linux 2) 활용
+  . 설치 및 환경 구성이 복잡하여 본 강의 실습용으로는 권장하지 않음.
+
+- Window OS Users : Codeonweb에서 다양한 개발환경 Test 가능
+  . Codeonweb : 회원 가입 후, 설치없이 web에서 실습 수행 가능(권장)
+
+Codeonweb 사이트 > 로그인후 > 실습메뉴, 언어선택-shell
+- bsmj.100@gmail.com/choi0407
+
+
+2-2. Terminal
+- 컴퓨터와 사용자간의 서로 소통시켜주는 Text 기반 인터페이스
+  . User가 리눅스 명령어의 입력 및 출력 값을 받는 곳
+  User <-> shell <-> kernel <-> HW
+
+2-3. 기본 주요 명령어 - help
+2-3-1. [명령어] -- help
+- 리눅스 명령어의 도움말을 보는 방법
+- 모든 명령어의 사용방법, 옵션 등을 다 외우고 있을 수 없기에 help 명령어로 필요한 옵션을 확인 후 사용
+
+$ ls --help
+$ cp --help
+
+
+2-4. 기본 주요 명령어 - man
+2-4-1. man [명령어]
+- 명령어의 도움말을 보는 방법
+- Manual pager utils
+- /검색어로 매뉴얼 내 해당 단어의 검색가능
+--> 매뉴얼의 약자
+
+--> Codeonweb 사이트에서는 man 명령어가 root권한이 아니어서 사용불가 
+--> 아래 url로 들어가서 확인할것
+https://bellard.org/jslinux/vm.html?cpu=riscv64&url=fedora33-riscv.cfg&mem=256
+
+
+2-5. 기본 주요 명령어 - echo, date
+2-5-1. echo [문자열]
+- 텍스트나 문자열을 화면에 출력
+- -n 옵션은 후행 줄바꿈을 생략하는데 씀
+
+echo 명령 실행 화면
+bash-4.4$ echo hello world
+hello world
+bash-4.4$ echo -n hello world
+hello worldbash-4.4$
+
+2-5-2. date
+- 날짜와 시간 확인
+
+date 명령 실행 화면
+bash-4.4$ date
+Fri Dec 3 03:22:45 UTC 2021
+bash-4.4$
+
+
+2-6. 기본 주요 명령어 - hostname, uname
+2-6-1. hostname
+- Hostname 확인
+
+hostname 명령 실행 확인
+root@DESKTOP-409N3LE:~# hostname
+DESKTOP-409N3LE
+
+2-6-2. uname
+- 운영체제 확인
+
+uname 명령 실행 화면
+bash-4.4$ uname
+Linux
+bash-4.4$
+
+
+3. File System(1)
+3-1. File system 개념
+- File : 관련 있는 정보들의 집합
+  . 컴퓨터 등의 기기에서 의미 있는 정보를 담는 논리적인 단위
+- File system : 운영체제가 파일을 시스템의 디스크 상에 구성하는 방식
+  . 시스템의 디스크 파티션상 파일들을 연속적이고 일정한 규칙을 가지게 관리하여 파일이나 자료를
+    쉽게 발견 및 접근할 수 있도록 보관/조직하는 체제
+- Linux File System
+  . 시스템 내의 파일을 효과적으로 관리하기 위해 계층적으로 구성한 유닉스, 리눅스 시스템의 파일과 디렉토리의 집합
+
+3-2. Linux File의 종류
+3-2-1. 일반 File
+- 일반파일은 데이터를 저장하는데 주로 사용됨
+- 각종 텍스트, 실행파일, 이미지 등 대부분의 파일은 일반파일임.
+
+3-2-2. 디렉토리(Directory)
+- Linux에서는 디렉토리도 파일로 취급
+- 디렉토리 파일에는 해당 디렉토리에 저장된 파일이나 하위 디렉토리의 정보가 저장됨.
+
+3-2-3. 심벌릭 링크(Symbolic link)
+- 심벌릭 링크는 원본 파일을 대신하도록 원본 파일은 다른 파일명으로 지정한것으로 윈도우의 바로가기와 유사한 개념
+
+3-2-4. 장치파일
+- Linux에서는 하드디스크나 마우스같은 장치들도 파일로 취급
+- 장치파일은 이러한 장치들을 관리하기 위한 파일
+- 장치파일은 /dev 디렉토리 아래에 위치
+
+
+3-3. Linux File System 구조
+- Linux file system의 구조는 아래 그림과 같은 계층구조로 되어 있으며 사용자들이 파일에 정보를 저장하고 검색할 수 있음.
+- 디렉토리명 : 설명
+  home : 사용자 홈 디렉토리가 생성되는 곳
+  media : CD_ROM이나 USB같은 외부 장치를 연결하는 디렉토리
+  opt : 추가 패키지가 설치되는 디렉토리
+  dev : 장치파일들이 저장되어 있는 디렉토리
+  root : root계정의 홈 디렉토리(/ 디렉토리와는 다름)
+  --> 최상위 디렉토리가 아니라 root계정의 홈 디렉토리임.
+  sys : 리눅스 커널관련 정보가 있는 디렉토리
+  usr : 기본 실행파일과 라이브러리 파일, 헤더 파일등의 파일이 저장되어 있는 디렉토리
+  boot : 부팅에 필요한 정보를 가진 파일들이 있는 디렉토리
+  var : 시스템 운영중에 발생한 데이터와 로그가 저장되는 디렉토리
+  tmp : 시스템 사용중에 발생한 임시데이터가 저장(부팅시 초기화)
+  srv : FTP나 Web등 시스템에서 제공하는 서비스의 데이터가 저장되는 디렉토리
+  run : 실행중인 서비스와 관련된 파일이 저장되는 디렉토리
+  proc : 프로세스 정보 등 커널 관련 정보가 저장되는 디렉토리
+  mnt : 파일 시스템을 임시로 연결하는 디렉토리
+  etc : 리죽스 설정을 위한 각종 파일들을 가지고 있는 디렉토리
+
+3-4. File system 주요 명령어 - pwd
+3-4-1. pwd
+- 현재 디렉토리 경로 확인
+- 현재 디렉토리를 경로를 확인하는 명령어
+- 현재 디렉토리의 절대 경로명을 출력
+
+pwd 명령 실행 화면
+bash-4.4$ pwd
+/home/work
+bash-4.4$
+
+3-5. File system 주요 명령어 - cd
+3-5-1. cd [이동할 경로]
+- Directory 이동
+- 현재 Directory에서 다른 Directory로 이동할 때 사용
+- 접근이 금지된 Directory를 제외하고는 어느 Directory든지 이동
+
+cd 명령 실행 화면
+bash-4.4$ pwd
+/howe/work
+bash-4.4$ cd ..    //상위 디렉토리로 이동
+bash-4.4$ pwd
+/home
+bash-4.4$ cd work/   //work/ 디렉토리로 이동
+bash-4.4$ pwd
+home/work
+bash-4.4$
+
+3-5-2. Absolute path(절대 경로)
+- 최상위 Directory(/)로 시작, 원하는 Directory까지 가는 경로를 기술하는 방식
+- 현재 위치와 상관없이 경로를 작성할 때 / 부터 시작하여 기술
+
+절대경로 예시
+bash-4.4$ ls
+test    test2
+bash-4.4$ cd test
+bash-4.4$ pwd
+/home/work/test
+bash-4.4$ cd /home/work/test2
+bash-4.4$ pwd
+/home/work/test2
+bash-4.4$
+
+3-5-3. Relative path(상대 경로)
+- 현재 위치를 기준으로 원하는 Directory 경로를 기술하는 방식
+- ./ : 현재 위치를 의미함
+- ../ : 현재 위치에서 상위 폴더로 이동
+
+상대경로 예시
+bash-4.4$ ls
+test    test2
+bash-4.4$ cd test
+bash-4.4$ pwd
+/home/work/test
+bash-4.4$ cd ../test2
+bash-4.4$ pwd
+/home/work/test2
+bash-4.4$
+
+3-5-4. Absolute / relative Path 사용 예시
+3-5-5. 현재 Directory : /home/work
+home - work - test - target
+                 - test2
+
+S1. target Directory로 이동(절대경로)
+bash-4.4$ pwd
+/home/work
+bash-4.4$ cd /home/work/test/target
+bash-4.4$ pwd
+/home/work/test/target
+
+S2. test2로 이동(상대경로)
+bash-4.4$ pwd
+/home/work/test/target
+bash-4.4$ cd ../../test2
+bash-4.4$ pwd
+/home/work/test2
+
+S3. work로 이동(절대경로)
+bash-4.4$ pwd
+/home/work/test2
+bash-4.4$ cd /home/work/
+bash-4.4$ pwd
+/home/work
+
+3-6. File system 주요 명령어 - ls
+3-6-1. ls [옵션]
+- Directory 내부 목록 확인
+- 현재 Directory 에 있는 file과 하위 Directory의 목록을 확인
+
+ls 명령 실행 화면
+bash-4.4$ ls
+bash-4.4$ touch test.txt
+bash-4.4$ ls
+test.txt
+bash-4.4$ 
+--> 하위의 파일 목록을 확인(확인을 위해 test.txt 파일을 생성)
+
+3-6-2. ls -a
+- 현재 Directory에 있는 숨겨진 file과 하위 Directory의 목록을 포함하여 확인
+
+ls -a 명령 실행 화면
+bash-4.4$ ls
+test.txt
+bash-4.4$ ls -a
+.      ..     .config     .work     test.txt
+bash-4.4$ 
+--> 하위의 숨겨진 파일을 포함한 목록을 확인
+
+3-6-3. ls -l
+- 현재 Directory에 있는 file과 하위 Directory의 목록을 자세히 확인
+
+ls -l 명령 실행 화면
+bash-4.4$ ls -l
+total 0
+-rw-r--r--    1 work      work      0 Sep 25 07:41 test.txt
+bash-4.4$ 
+--> test.txt 의 소유관계, 생성일자등을 알수 있다.
+
+3-7. File system 주요 명령어 - mkdir
+3-7-1. mkdir [ directory 경로 ]
+- Directory 생성
+- 쓰기 권한이 있는 Directory내에서 Directory 를 생성할 수 있음
+- Directory를 여러 개 동시에 생성하려면 공백으로 구분을 지어서 명령어를 실행
+
+mkdir 명령 실행 화면
+bash-4.4$ ls
+bash-4.4$ mkdir test
+bash-4.4$ ls
+test
+bash-4.4$ mkdir test2 test3 test4
+bash-4.4$ ls
+test   test2   test3   test4
+bash-4.4$
+
+3-8. File system 주요 명령어 - rmdir
+3-8-1. rmdir [ directory 경로 ]
+- Directory 삭제
+- 비어있는 디렉토리를 삭제하는 명령어
+- 여러개를 동시에 삭제하려면 공백으로 구분을 지어서 명령어를 실행
+
+rmdir 명령 실행 화면
+bash-4.4$ ls
+test   test2   test3   test4
+bash-4.4$ rmdir test
+bash-4.4$ ls
+test2   test3   test4
+bash-4.4$ rmdir test2 test3 
+bash-4.4$ ls
+test4
+bash-4.4$
+--> 비어있는 디렉토리만 삭제된다.
+
+3-9. File system 주요 명령어 - cp
+3-9-1. cp -r [복사할 Directory 경로][대상 Directory 경로]
+- Directory 복사
+- cp 명령어를 통해 Directory를 복사 할 수 있음
+
+cp 명령 실행 화면
+bash-4.4$ ls
+test   test2 
+bash-4.4$ cd test2
+bash-4.4$ ls
+bash-4.4$ cd  ..
+bash-4.4$ cp -r test test2
+bash-4.4$ cd test2
+bash-4.4$ ls
+test
+bash-4.4$  
+
+3-9-2. cp [복사할 file명][대상 file명]
+- cp 명령어를 통해 file를 복사할 수 있음
+- cp 명령어에 인자값을 어떻게 주느냐에 따라 파일을 디렉토리로 복사할수도 있고 디렉토리끼리 복사할수도 있고 파일끼리 덮어쓸수도 있음
+
+cp 명령 실행 화면
+bash-4.4$ ls
+test   test.txt   test2
+bash-4.4$ cp test test2
+bash-4.4$ cd test2
+bash-4.4$ ls
+test
+bash-4.4$ cat test
+hello world!
+hello world!
+
+3-10. File system 주요 명령어 - mv
+3-10-1. mv [이동할 Directory 경로] [대상 Directory 경로]
+- Directory 이동(잘라내기)
+- mv 명령어를 통해 Directory를 이동시킬 수 있음
+
+mv 명령 실행 화면
+bash-4.4$ ls
+test   test2
+bash-4.4$ mv test test2
+bash-4.4$ cd test2
+bash-4.4$ ls
+test
+bash-4.4$ cd ..
+bash-4.4$ ls
+test2
+bash-4.4$ pwd
+/home/work
+bash-4.4$ 
+
+3-10-2. mv [이동할 file명] [대상 file명]
+- mv 명령어를 통해 file을 이동 할 수 있음
+- mv 명령어 또한 cp와 마찬가지로 인자값을 어떻게 주느냐에 따라 파일을 디렉토리로 복사할수도 있고 디렉토리끼리 복사할수도 있고
+  파일끼리 덮어쓸수도 있음.
+
+mv 명령 실행 화면
+bash-4.4$ ls
+test   test.txt   test2
+bash-4.4$ mv test test2
+bash-4.4$ ls
+test.txt   test2
+bash-4.4$ cd test2
+bash-4.4$ ls
+test
+bash-4.4$ cat test
+hello world!
+hello world!
+
+3-11. File system 주요 명령어 - touch
+3-11-1. touch [file명]
+- text파일을 생성하는 명령어
+
+touch 명령 실행 화면
+bash-4.4$ ls
+bash-4.4$ touch test
+bash-4.4$ ls
+test
+bash-4.4$ touch test.txt
+bash-4.4$ ls
+test   test.txt
+
+3-12. File system 주요 명령어 - cat, more, less
+3-12-1. cat [file명], more[file명]
+- cat 명령어는 텍스트 파일의 내용을 화면에 연속적으로 출려
+- 파일이 큰 경우 화면단위로 내용을 출력해주는 more이라는 명령어를 사용
+
+cat/more 명령 실행 화면
+bash-4.4$ ls
+test   test.txt
+bash-4.4$ cat test   //비어있다.
+bash-4.4$ echo "hello world!" >> test   //hello world! 입력
+bash-4.4$ cat test
+hello world!
+bash-4.4$ echo "hello world!" >> test   //hello world! 한번 더 입력
+bash-4.4$ cat test
+hello world!
+hello world!
+bash-4.4$ more test
+hello world!
+hello world!
+bash-4.4$ cat test -n
+	1 hello world!
+	2 hello world!
+
+3-12-2. less [‎file명]
+- 파일 내용 전체 출력
+- 파일 출력한 내용을 앞뒤로 스크롤하며 이동할 수 있음.
+
+less 명령 실행 화면
+bash-4.4$ ls
+test   test.txt
+bash-4.4$ less test
+
+3-13. File system 주요 명령어 - rm
+3-13-1. rm [삭제할 file명]
+- rm 명령어를 사용하여 삭제할때는 윈도우 처럼 휴지통으로 가는 것이 아니라 복구할 수 없음.
+- rm 명령어를 날릴때는 주의를 요망함.
+- rm -r 명령어로 파일이 포함된 dirctory 또한 삭제 가능
+
+rm 명령 실행 화면
+bash-4.4$ ls
+test.txt   test2
+bash-4.4$ rm test.txt
+bash-4.4$ ls
+test2
+
+bash-4.4$ ls
+test2
+bash-4.4$ rm test2
+rm: 'test2' is a directory
+bash-4.4$ rm -r test2  //옵션 -r 로 삭제한다.
+bash-4.4$ ls
+
+3-14. File system 주요 명령어 - df, du
+3-14-1. df [옵션]
+- 리눅스 시스템 전체 (마운트 된) 디스크 사용량을 확인
+- -h옵션을 사용하면 메가(M), 기가(G) 단위로 디스크 공간을 확인할 수 있음
+
+df 명령 실행 화면
+bash-4.4$ df
+bash-4.4$ df -h
+
+3-14-2. du [옵션] [Directory 경로]
+- 특정 디렉토리를 기준으로 디스크 사용량을 확인
+- -h 옵션을 사용하면 메가(M), 기가(G) 단위로 디스크 공간을 확인할 수 있음
+
+du 명령 실행 화면
+bash-4.4$ ls -a
+.   ..   .config   .work
+bash-4.4$ du
+4	./.work
+12	./.config
+20	.
+bash-4.4$
+
+bash-4.4$ du -h  // -h옵션 사용
+4.0k	./.work
+12.0k	./.config
+20.0k	.
+bash-4.4$
+
+bash-4.4$ du -h /home  //home디렉토리 하위 폴더와 파일 용량 확인
+
+
+정리하기
+- Linux의 특징
+  . Multi user, Multi-tasking
+  . 다양하고 뛰어난 네트워크 환경 및 파일 시스템 지원
+- Linux 기본 명령어
+  . help, man, echo 등  // echo : 화면 출력
+- Linux File system 의 이해
+  . Linux file system structure의 이해
+  . 다양한 명령어 사용법 및 예제
+    - pwd, ls, cd, mkdir, cp, rm, cat, du, df 등
+    - 명령어들은 수많은 사용방법이 있으므로 필요한 경우 help, man을 활용하거나 인터넷 검색을 통해 옵션을 확인하여 사용해야 함
+
+
+1. Linux는 Multi user, Multi-tasking을 지원하며 다양하고 뛰어난 네트워크 호나경 및 파일 시스템 지원하는 것이 그 특징이다.
+2. Linux는 시스템과 관련된 정보와 하드웨어 같은 장치를 모두 파일로 관리한다. Linux는 파일을 효율적으로 관리하기 위해 디렉토리를 사용하는데
+   디렉토리는 계층구조를 가지고 있다. Linux는 전체 파일을 용도에 따라 계층 디렉토리로 구분하여 관리하며 이것을 Linux File system이라고 한다.
+3. Linux File system은 파일의 효율적인 관리를 위해 pwd, ls, cd, mkdir, cp, rm, cat, du, df 등 다양한 명령어들을 제공한다.
+4. Linux 명령어들은 수많은 사용방법이 있으므로 필요한 경우 help, man을 활용하거나 인터넷 검색을 통해 옵션을 확인하여 사용하는 것을 권장한다.
+
+

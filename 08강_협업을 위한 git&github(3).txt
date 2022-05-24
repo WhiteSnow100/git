@@ -1,0 +1,218 @@
+8강. 협업을 위한 git&github(3) [ 이언 교수 ]
+
+학습개요
+본 강의에서는 git branch와 git branch를 다루는 방법에 대해 알아보고자 한다. 이를 위해 git branch의 개념과 사용 예시에 대해 알아보고,
+git branch를 생성하는 방법에 대해 알아본다. 그리고 git branch를 병합하는 방법에 대해 시나리오 기반으로 다양한 예시를 살펴보고자 한다.
+
+학습목표
+1. git branch의 개념에 대해 이해한다.
+2. git branch를 생성하는 방법에 대해 이해한다.
+3. 다양한 상황에서 git branch를 병합하는 방법에 대해 이해한다.
+
+학습목차
+1. branch의 이해
+2. branch 생성
+3. branch 병합(1)
+
+
+1. branch의 이해
+1-1. 모든 버전 관리 시스템엔 "브랜치(branch))" 개념이 존재
+- branch : 나무가 가지에서 새 줄기를 뻗듯이 여러 갈래로 퍼지는 데이터 흐름을 가리키는 말
+- git에서 브랜치(branch)는 개발의 독립적인 라인을 의미
+  . 소프트웨어를 개발할 때에 개발자들은 동일한 소스코드를 함께 공유하고 다루게 됨
+    (동일한 소스코드 위에서 버그를 수정하기도 하고 새로운 기능을 만듦)
+  . 이와 같이 여러 사람이 동일한 소스코드를 기반으로 서로 다른 작업을 할 때에는 각각 서로 다른 버전의 코드가 만들어 질 수 밖에 없음
+  . 이럴 때, 여러 개발자들이 동시에 다양한 작업을 할 수 있게 만들어 주는 기능이 바로 '브랜치(Branch)'
+
+1-2. Branch가 필요한 이유
+- 제품 출시 시나리오 - 고객사별로 추가 내용이 다른 경우
+  . 버전관리 시스템을 통해 사용설명서를 관리
+    Master A -> B -> C -> D  출시전 사용설명서 버전
+  . 출시 후 고객사별로 추가로 요구하는 내용이 다른 경우?
+    - 요구사항을 반영하다 보면 고객사에 따라 제품이 달라질 것이고 이에 맞춰 사용설명서도 달라져야 함.
+  . 처음에 작업했던 저장소 전체를 여러 개로 복사해서 각 고객사의 이름을 붙인 다음 저장소마다 버전관리를 따로 하는 방법
+    A사 : A -> B -> C -> D -> AE
+    B사 : A -> B -> C -> D -> BE -> BF -> BG
+    C사 : A -> B -> C -> D -> CE 
+  . 비효율적(자료 중복, 변경 사항 관리 등)
+    - A -> B -> C -> D : 중복으로 비효율
+    - AE, BE -> BF -> BG, CE : 변경 사항 관리가 어려움
+
+- 제품 출시 시나리오 - B사의 최신 내용이 C사에도 필요한 상황
+  . BG의 필요 부분을 Copy해서 commit? BE/BF의 변경 내용은 CE에 없음(오류가 날 수 있음)
+  . BG 전체를 Copy해서 commit? CE의 변경 내용이 누락
+    A사 : A -> B -> C -> D -> AE
+    B사 : A -> B -> C -> D -> BE -> BF -> BG
+    C사 : A -> B -> C -> D -> CE -> CF
+    - BE -> BF -> BG, CE -> CF : 변경 내용을 합치기 어려움
+
+1-3. Branch 이해
+- git으로 버전관리를 시작하면(git init 시 생성), 기본적으로 master branch가 만들어짐
+- 새 branch를 만들면 master branch를 유지하면서 기존 파일 내용을 수정하거나 새로운 기능을 구현할 수 있음
+                                             ┌----> a1 -> a2
+  A master : A -> B -> C -> D -<branch>-> E -> F -> G
+
+- 새 branch에서 원하는 작업을 다 끝냈으면, 새 branch에 있던 파일을 원래 master branch로 합칠 수 있음.(merge)
+                                             ┌----> a1 -> a2 ---------┐
+  A master : A -> B -> C -> D -<branch>-> E -> F -> G -<merge>-> H
+
+1-4. Branch 활용 사례
+- 새로운 기능 추가
+  . 대표적인 브랜치 사용 예시
+  . master 브랜치에는 정상적으로 동작하는 안정적인 버전의 프로젝트가 저장되어 있기 때문에 새로운 기능을 추가할 때는
+    master 브랜치의 최신 commit으로 부터 신규 브랜치를 생성해서 개발함
+  . 개발, 코드리뷰, 테스트까지 모두 완료해 이상이 없다면 master 브랜치로 병합을 수행
+- 버그 수정(hot fix, bug fix)
+  . 오류 및 버그를 수정하는 브랜치
+  . 보통 급하게 수정하는 경우가 많아 master 와 병합 후 다른 브랜치들이 병합하는 상황에서 충돌이 발생할 수 있으므로 주의가 필요
+- 이전 코드 개선
+  . 기능 개발은 완료되었으나 함수의 로직을 개선하거나 코드가 마음에 들지 않아 수정을 해야하는 경우
+    동일 코드에 주석을 사용하는 것 보다 브랜치를 생성하여 새로운 코드를 작성하는 것을 추천
+- 병합과 리베이스 테스트
+  . 병합 및 리베이스를 수행하는 경우(branch간 통합), 이슈가 발생할 소지가 많음
+  . 따라서 실제 병합을 수행하기 전 문제가 있는지 여부를 검증하기 위해 동일한 branch를 생성하여 test하는 경우가 많음
+  . 만약 issue가 생긴다면 해당 테스트용 branch를 삭제하여 관리
+
+1-5. git flow : 대중적인 git 브랜치 전략
+- Git-flow에는 5가지 종류의 브랜치가 존재
+- 항상 유지되는 메인 브랜치들(master, develop)과 일정 기간 동안만 유지되는 보조 브랜치들(feature, release, hotfix)이 존재
+  . master : 제품으로 출시될 수 있는 브랜치
+  . develop : 다음 출시 버전을 개발하는 브랜치
+  . feature : 기능을 개발하는 브랜치
+  . release : 이번 출시 버전을 준비하는 브랜치
+  . hotfix : 출시 버전에서 발생한 버그를 수정하는 브랜치
+
+
+2. branch 생성
+2-1. 시나리오
+- branch 만들기
+- branch 이동하기
+- 새 branch에서 commit하기
+
+2-2. 실습환경 셋팅하기
+- git 저장소를 생성하고 config 설정
+- work.txt를 생성하고 commit
+[ git 초기 설정 ]
+bash-4.4$ mkdir git_project
+bash-4.4$ cd git_project               //username/email입력
+bash-4.4$ git init
+Initialized empty Git repository in /home/work/git_project/.git/
+bash-4.4$ git config --global user.name "EON LEE"
+bash-4.4$ git config --global user.email smurfy33.skku@gmail.com
+bash-4.4$ git config --global color.ui false
+bash-4.4$ _ 
+
+[ git commit ]
+[ git log 확인 ]
+
+- git clone 을 활용한 setting 방법
+- git clone https://github.com/EON-LEE/Course-SoftwareEngineering.git
+
+2-3. branch 만들기
+- 신규 branch를 만들어 git log 확인
+- Git branch [브랜치명]
+- 현재 브랜치를 확인할때는 git branch 명령 사용
+[ 현재 branch 확인 ] 
+[ 신규 branch 생성 ]
+
+- 신규 branch를 만들어 git log 확인
+[ git log 도식화 ]                            ┌ 3 
+                                                 │
+master 1(99db) -> 2(c808) -> 3(4cce) -┿> branch
+                                                 │
+                                                 ├ 3
+                                                 └ 3
+
+2-4. branch 사이 이동하기 - git checkout
+- 만들어진 branch를 변경해가며 각 branch별 작업을 수행 / branch 간 차이를 확인
+- master branch 에 새 commit을 생성
+                                                 ┌
+                                             <branch>
+master 1(99db) -> 2(c808) -> 3(4cce) -┿> 4(cf50)
+
+- company_1 branch checkout 후 변경 내용 확인
+
+2-5. 새 branch에서 commit하기
+- 새로 만든 branch에서 commit 수행 시 전체 git flow 확인
+- company_1 branch에서 work.txt 수정 / company_1.txt 파일 생성 후 commit
+- git log를 통해 master branch와 company_1 branch간의 차이 확인 가능(--branch 옵션)
+- branch 별 차이를 좀 더 보기 쉽게 graph 형태로도 확인 가능
+  bash-4.4$ git log --oneline --branches --graph
+[ company_1 branch log ]
+[ master branch log ]
+
+
+3. branch 병합(1)
+3-1. branch merge(병합) 시나리오
+- 서로 다른 파일을 가진 브랜치 병합하기
+- 서로 같은 파일 내 다른 위치를 수정했을 때 브랜치 병합하기
+- 서로 같은 파일 내 같은 위치를 수정했을 때 브랜치 병합하기
+
+3-2. 서로 다른 파일을 가진 브랜치 병합하기
+- 새 branch에서 생성된 파일 master branch로 병합하기
+- master branch에서 work.txt commit
+- company_1 branch checkout
+- company_1.txt commit
+- master branch에서 company_1 branch merge 하기
+- Git merge 명령을 통해 브랜치 병합을 수행 가능
+  bash-4.4$ git merge company_1
+
+  [ head ]  HEAD가 master branch를 가리킴
+      |
+  [ master ]  master가 work 1 commit을 가리킴
+      |
+     ① work 1
+
+  . company_1 branch 생성
+  . master branch에서 master.txt commit
+
+  [ head ]                                    [ head ]   
+      |                                              |
+  [ master ]                                  [ master ]  master가 master work 2 commit을 가리킴
+      |                                              |
+     ① work 1                     ① ------->② master work 2
+      |                                |
+  [ company_1 ]           [ company_1 ]
+  company_1 이 
+  work 1 commit을 가리킴
+
+   . company_1 branch checkout
+   . company_1.txt commit
+               [ master ] master가 master work 2 commit을 가리킴
+     work 1        |
+       ①---┬--->② master work 2
+             └---------③ company_1 work 2
+                           |
+                    [ company_1 ] company_1이 company_1 work 2 commit을 가리킴
+                           |
+                       [ HEAD ] HEAD가 company_1 branch를 가리킴
+
+   --> head가 master에서 commit을 했으므로 company_1 을 가리킴
+
+  . master branch에서 company_1 branch merge 하기
+                                        [ HEAD ] HEAD가 master branch를 가리킴
+                                              |
+                                        [ master ] master가 Merge branch company_1 commit을 가리킴
+work1  master work2                    |
+  ① --┬--> ② -------------┬------->④ Merge branch company_1
+         |  company_1 work2  |
+        └-------> ③ --------┘
+                       | 
+              [ company_1 ]
+
+
+정리하기
+- branch
+  . git에서 브랜치(branch)는 개발의 독립적인 라인
+- git branch 관련 명령어
+  . git branch : 모든 branch를 출력
+  . git branch <branch-name> : 현재 워킹 디렉토리를 베이스로 새로운 branch를 생성
+  . git checkout <branch-name> : 워킹 디렉토리를 만들고 HEAD를 특정 branch에 일치시킴
+  . git merge <branch-name> : branch를 체크아웃되어 있는 branch로 merge
+
+
+정리하기
+1. git branch는 개발의 독립적인 라인으로 다양한 상황(신규 기능 개발, 버그 수정, 이전 코드 개선 등)에서 활용이 가능한 git의 핵심기능이다.
+2. git branch 생성은 git branch [브랜치명] 명령을 통해 수행이 가능하다.
+3. git 브랜치간 통합은 git merge 명령을 통해 수행이 가능하다.
+
