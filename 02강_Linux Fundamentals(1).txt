@@ -1,4 +1,4 @@
-2강. Linux Fundamentals(1) [ 이언 교수 ]
+2강. Linux Fundamentals(1)
 
 학습개요
 본 강의에서는 데이터 분석 및 소프트웨어 개발 환경 구성에 필수인 Linux 에 대한 이해 및 Linux File System에 대해 알아보고자 한다.
